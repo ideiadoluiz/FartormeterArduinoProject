@@ -5,7 +5,7 @@ This Arduino code allows you to send and receive data between the arduino device
 
 ### Usage
 
-For this project, I'm using [SparkFun RedBoard](https://www.sparkfun.com/products/12757), which I though that it was more worth it to buy their [Inventor's Kit](https://www.sparkfun.com/products/12060) + [RedBearLab BLE Shield](http://redbearlab.com/bleshield/), which is the shield for the **communication** between the devices + [Sound detection sensor](http://www.lightinthebox.com/high-quality-arduino-microphone-sound-detection-sensor-module_p903301.html) + [Methane Gas Sensor MQ-4](http://leeselectronic.com/product/15529.html).
+For this project, I'm using [SparkFun RedBoard](https://www.sparkfun.com/products/12757), which I bought their [Inventor's Kit](https://www.sparkfun.com/products/12060) + [RedBearLab BLE Shield](http://redbearlab.com/bleshield/), which is the shield for the **communication** between the devices + [Sound detection sensor](http://www.lightinthebox.com/high-quality-arduino-microphone-sound-detection-sensor-module_p903301.html) + [Methane Gas Sensor MQ-4](http://leeselectronic.com/product/15529.html).
 
 For getting started with the Arduino board + BLE Shield you should probably take a look at [here](https://github.com/RedBearLab/nRF8001), [here](https://github.com/RedBearLab/BLEShield/blob/master/Docs/LibraryManager.pdf) and [here](http://redbearlab.com/getting-started-bleshield).
 
