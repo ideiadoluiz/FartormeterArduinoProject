@@ -14,8 +14,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  *    Fartometer
  *
  *    Using simple chat sketch from RedBearLab, work with the Chat iOS/Android App.
- *    Type something from the Arduino serial monitor to send
- *    to the Chat App or vice verse.
+ *    Get the command from the app and handle it.
+ *    After that, it sends an answer.
  *
  */
 
@@ -25,14 +25,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <boards.h>
 #include <RBL_nRF8001.h>
 
+#define EMPTY_VALUE ""
+
+// All my messages should be shorther than 10 characters.
+// The 10th character is the null terminator, always.
+char msg[10] = {0};
+
 void setup()
 {  
-  // Default pins set to 9 and 8 for REQN and RDYN
-  // Set your REQN and RDYN here before ble_begin() if you need
-  //ble_set_pins(3, 2);
-  
   // Set your BLE Shield name here, max. length 10
-  //ble_set_name("My Name");
+  ble_set_name("Fartometer");
   
   // Init. and start BLE library.
   ble_begin();
@@ -41,30 +43,60 @@ void setup()
   Serial.begin(57600);
 }
 
-unsigned char buf[16] = {0};
-unsigned char len = 0;
-
-// All my messages should be shorther or equal to 10 chars.
-unsigned char msg[10] = {0};
-
 void loop()
-{
-  if ( ble_available() )
-  {
-    while ( ble_available() )
-      Serial.write(ble_read());
-      
-    Serial.println();
-  }
+{ 
+  String answer = readData();
+  if (answer != EMPTY_VALUE) 
+    Serial.println(answer);
   
-  if ( Serial.available() )
-  {
-    delay(5);
-    
-    while ( Serial.available() )
-        ble_write( Serial.read() );
-  }
+  writeData(answer);
   
   ble_do_events();
+}
+
+// read data that comes from the external device
+String readData()
+{
+  if (ble_available())
+  {
+    int i = 0;
+    while (ble_available())
+    {
+      if (i < 10)
+      {
+        msg[i] = ble_read();
+        i++;
+      }
+      else
+      {
+        // ignores all others characters
+        ble_read();
+      }
+    }
+
+    // assign the char
+    // We don't need the '\0', because we already did it
+    String currentCommand(msg);
+    
+    // clear msg buffer
+    for (i = 0; i < 10; i++)
+      msg[i] = 0;
+    
+    return currentCommand;
+  }
+
+  return EMPTY_VALUE;
+}
+
+// write data that is going to be handled by the external device
+void writeData(String data)
+{
+  if (data == EMPTY_VALUE)
+    return;
+    
+  delay(5);
+  byte dataByte[10] = {0};
+  data.getBytes(dataByte, 10);
+  ble_write_bytes(dataByte, 10);
 }
 
