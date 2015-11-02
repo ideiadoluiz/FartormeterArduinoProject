@@ -31,11 +31,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #define SOUND_LIMIT 0
 
 // commands that will come from the external device
-#define CMD_REQUEST_READ_SENSORS "checksensors"
-#define CMD_REQUEST_STOP_READING_SENSORS "stopchecking"
+#define CMD_REQUEST_READ_SENSORS "cmd_start"
+#define CMD_REQUEST_STOP_READING_SENSORS "cmd_stop"
 
-#define CMD_ANSWER_METHANE "methane:"
-#define CMD_ANSWER_SOUND "sound:"
+#define CMD_ANSWER_METHANE "met:"
+#define CMD_ANSWER_SOUND "snd:"
 
 // change it here for your methane sensor pin number
 #define METHANE_ANALOG_PIN A0
@@ -56,7 +56,7 @@ void setup()
   ble_begin();
   
   // Enable serial debug
-  Serial.begin(57600);
+  //Serial.begin(57600);
 }
 
 void loop()
