@@ -26,10 +26,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <RBL_nRF8001.h>
 
 #define EMPTY_VALUE ""
+#define MAX_SIZE_CMD 16
+#define METHANE_LIMIT 100
+#define SOUND_LIMIT 0
 
-// All my messages should be shorther than 10 characters.
-// The 10th character is the null terminator, always.
-char msg[10] = {0};
+// commands that will come from the external device
+#define CMD_REQUEST_READ_SENSORS "checksensors"
+#define CMD_REQUEST_STOP_READING_SENSORS "stopchecking"
+
+#define CMD_ANSWER_METHANE "methane:"
+#define CMD_ANSWER_SOUND "sound:"
+
+// change it here for your methane sensor pin number
+#define METHANE_ANALOG_PIN A0
+// change it here for your sound sensor pin number
+#define SOUND_ANALOG_PIN A2
+
+// All my messages should be shorther than MAX_SIZE_CMD characters.
+// The (MAX_SIZE_CMD-1)th character is the null terminator, always.
+char msg[MAX_SIZE_CMD] = {0};
+bool canReadSensors = false;
 
 void setup()
 {  
@@ -46,10 +62,18 @@ void setup()
 void loop()
 { 
   String answer = readData();
-  if (answer != EMPTY_VALUE) 
-    Serial.println(answer);
   
-  writeData(answer);
+  if (answer == CMD_REQUEST_READ_SENSORS)
+    canReadSensors = true;
+  else if (answer == CMD_REQUEST_STOP_READING_SENSORS)
+    canReadSensors = false;
+
+  if (canReadSensors)
+  {
+    // commenting this line for testing purposes
+    //if (analogRead(METHANE_ANALOG_PIN) > METHANE_LIMIT)
+      writeData(CMD_ANSWER_METHANE + String(analogRead(METHANE_ANALOG_PIN)));
+  }
   
   ble_do_events();
 }
@@ -62,7 +86,7 @@ String readData()
     int i = 0;
     while (ble_available())
     {
-      if (i < 10)
+      if (i < MAX_SIZE_CMD)
       {
         msg[i] = ble_read();
         i++;
@@ -79,7 +103,7 @@ String readData()
     String currentCommand(msg);
     
     // clear msg buffer
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < MAX_SIZE_CMD; i++)
       msg[i] = 0;
     
     return currentCommand;
@@ -95,8 +119,8 @@ void writeData(String data)
     return;
     
   delay(5);
-  byte dataByte[10] = {0};
-  data.getBytes(dataByte, 10);
-  ble_write_bytes(dataByte, 10);
+  byte dataByte[MAX_SIZE_CMD] = {0};
+  data.getBytes(dataByte, MAX_SIZE_CMD);
+  ble_write_bytes(dataByte, MAX_SIZE_CMD);
 }
 
