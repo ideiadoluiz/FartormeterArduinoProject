@@ -70,9 +70,8 @@ void loop()
 
   if (canReadSensors)
   {
-    // commenting this line for testing purposes
-    //if (analogRead(METHANE_ANALOG_PIN) > METHANE_LIMIT)
       writeData(CMD_ANSWER_METHANE + String(analogRead(METHANE_ANALOG_PIN)));
+      // write here the sound data
   }
   
   ble_do_events();
