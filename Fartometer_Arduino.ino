@@ -27,15 +27,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #define EMPTY_VALUE ""
 #define MAX_SIZE_CMD 16
-#define METHANE_LIMIT 100
-#define SOUND_LIMIT 0
+//#define METHANE_LIMIT 100
+//#define SOUND_LIMIT 0
 
 // commands that will come from the external device
 #define CMD_REQUEST_READ_SENSORS "cmd_start"
 #define CMD_REQUEST_STOP_READING_SENSORS "cmd_stop"
 
 #define CMD_ANSWER_METHANE "met:"
-#define CMD_ANSWER_SOUND "snd:"
+//#define CMD_ANSWER_SOUND "snd:"
 
 // change it here for your methane sensor pin number
 #define METHANE_ANALOG_PIN A0
@@ -71,7 +71,7 @@ void loop()
   if (canReadSensors)
   {
       writeData(CMD_ANSWER_METHANE + String(analogRead(METHANE_ANALOG_PIN)));
-      // write here the sound data
+      writeAudioData(analogRead(SOUND_ANALOG_PIN));
   }
   
   ble_do_events();
@@ -121,5 +121,11 @@ void writeData(String data)
   byte dataByte[MAX_SIZE_CMD] = {0};
   data.getBytes(dataByte, MAX_SIZE_CMD);
   ble_write_bytes(dataByte, MAX_SIZE_CMD);
+}
+
+void writeAudioData(int audioData)
+{
+  ble_write(highByte(audioData));
+  ble_write(lowByte(audioData));
 }
 
